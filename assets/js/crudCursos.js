@@ -1,76 +1,24 @@
-const arrayCursos = [
-  {
-    id: 1,
-    nome: "Harmonização Facial e Glútea",
-    descricao: "Curso avançado de estética facial e corporal",
-    professor: "João Silva",
-    data_inicio: "2026-03-10",
-    data_encerramento: "2026-03-20",
-    area: "Estética Avançada",
-    preco: 8500.00,
-    vagas: 20,
-    endereco: {
-      cep: "01001-000",
-      rua: "Av. Paulista",
-      logradouro: "Sala 101",
-      bairro: "Bela Vista",
-      numero: "1234",
-      complemento: "Bloco B",
-      cidade: "São Paulo",
-      estado: "SP"
-    }
-  },
-  {
-    id: 2,
-    nome: "Limpeza de Pele Profunda",
-    descricao: "Curso básico de técnicas de limpeza facial",
-    professor: "Maria Oliveira",
-    data_inicio: "2026-04-05",
-    data_encerramento: "2026-04-10",
-    area: "Estética Básica",
-    preco: 1200.00,
-    vagas: 15,
-    endereco: {
-      cep: "20040-020",
-      rua: "Rua da Quitanda",
-      logradouro: "2º Andar",
-      bairro: "Centro",
-      numero: "567",
-      complemento: "Sala 12",
-      cidade: "Rio de Janeiro",
-      estado: "RJ"
-    }
-  },
-  {
-    id: 3,
-    nome: "Massagem Relaxante",
-    descricao: "Curso prático de técnicas de massagem para bem-estar",
-    professor: "Carlos Pereira",
-    data_inicio: "2026-05-01",
-    data_encerramento: "2026-05-07",
-    area: "Bem-estar",
-    preco: 600.00,
-    vagas: 10,
-    endereco: {
-      cep: "30130-010",
-      rua: "Av. Afonso Pena",
-      logradouro: "Loja 5",
-      bairro: "Funcionários",
-      numero: "890",
-      complemento: "Shopping Center",
-      cidade: "Belo Horizonte",
-      estado: "MG"
-    }
-  }
-];
+function buscarCursos() {
+  return fetch("http://localhost:8080/arrayCursos")
+    .then(response => response.json());
+}
 
+const arrayCursos = buscarCursos()
+  .then(cursos => {
+    console.log(cursos);
+  })
+  .catch(erro => {
+    console.error("Erro ao buscar cursos:", erro);
+  });
 
+console.log(arrayCursos)
 
-  function renderizarCursos() {
-    const tbody = document.getElementById("listarCursos");
-    tbody.innerHTML = ""; 
+function renderizarCursos() {
+  const tbody = document.getElementById("listarCursos");
+  tbody.innerHTML = "";
 
-    arrayCursos.forEach(curso => {
+  buscarCursos().then(cursos => {
+    cursos.forEach(curso => {
       const tr = document.createElement("tr");
 
       tr.innerHTML = ` <td>${curso.id}</td>
@@ -91,12 +39,13 @@ const arrayCursos = [
 
       tbody.appendChild(tr);
     });
-  }
+  });
+}
 
-  renderizarCursos();
-  function adicionarCurso() {
-    console.log("chamou o modal");
-    modal_container_adicionar.innerHTML = `
+renderizarCursos();
+function adicionarCurso() {
+  console.log("chamou o modal");
+  modal_container_adicionar.innerHTML = `
     <div class="modal-container show">
       <div class="modal-overlay" onclick="fecharModal()"></div>
       <div class="modal">
@@ -213,7 +162,7 @@ const arrayCursos = [
       </div>
     </div>
   `;
-  }
+}
 
 function deletarCurso(id) {
   console.log("chamou o modal");
@@ -234,36 +183,31 @@ function deletarCurso(id) {
   `;
 }
 
-
-  // aqui é a fucao que faz o delete do array/json/ aqui vocês tem que ver como vão fazer deixei como eu faria
-  //aqui também depende do nome do json principal, não sei como vai ser feito fiquem avontade pra só apagar e refazer
-  function confirmarDelete(id) {
-    console.log("Curso deletado com ID:", id);
-
-    // como eu faria pra remover duj array 
-    //aqui ele proucura a posicao do id que voce passar, se ele lnão achar  retorna -1
-    const posicao = arrayCursos.findIndex(c => c.id === id);
-    //vcs nao sao burro ,mas aqui signifca que se a posicao for difernete de -1 ou seja ele achou o id dentro dos cursos ele apaga com splice, 
-    //que espera a posicao onde ele vai comecar e o segundo parametro é a quantidade que ele vai remover apartir dai.
-    if (posicao !== -1) {
-      arrayCursos.splice(posicao, 1);
-      alert("Curso excluído com sucesso!");
-      //da um reload aquiiii
-    }
-
+function confirmarDelete(id) {
+    fetch(`http://localhost:8080/arrayCursos/${id}`, {
+    method: "DELETE"
+  })
+  .then(() => {
+    alert("Curso excluído com sucesso!");
     fecharModal();
-  }
+    carregarCursos();
+  })
+  .catch(error => {
+    console.error("Erro ao deletar:", error);
+  });
+}
 
-  function atualizarCurso(id) {
-    console.log("chamou o modal");
+function atualizarCurso(id) {
+  console.log("chamou o modal");
+  buscarCursos()
+    .then(cursos => {
+      const curso = cursos.find(c => c.id === id);
+      if (!curso) {
+        alert("Curso não encontrado!");
+        return;
+      }
 
-    const curso = arrayCursos.find(c => c.id === id);
-    if (!curso) {
-      alert("Curso não encontrado!");
-      return;
-    }
-
-    modal_container_adicionar.innerHTML = `
+      modal_container_adicionar.innerHTML = `
     <div class="modal-container show">
       <div class="modal-overlay" onclick="fecharModal()"></div>
       <div class="modal">
@@ -380,7 +324,8 @@ function deletarCurso(id) {
       </div>
     </div>
   `;
-  }
-  function fecharModal() {
-    modal_container_adicionar.innerHTML = ``;
-  }
+    })
+}
+function fecharModal() {
+  modal_container_adicionar.innerHTML = ``;
+}

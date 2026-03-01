@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conecta Estética ADM</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/all.min.css">
+</head>
+
+<body>
+  <div class="container-fluid p-4">
+    <div class="row">
+      <div class="col-12 col-md-10">
+        <h1 class="fw-semibold">Lista de Cursos</h1>
+      </div>
+      <div class="col-12 col-md-2 d-flex justify-content-md-end align-items-center" onclick="adicionarCurso()">
+        <a class="btn btn-success px-3" role="button" aria-disabled="true">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+    <table class="table" style="border-spacing: 10px; border-collapse: separate;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Área</th>
+          <th>Preço(R$)</th>
+          <th>Qtd Vagas</th>
+          <th class="text-center">Alterar</th>
+          <th class="text-center">Excluir</th>
+        </tr>
+      </thead>
+      <tbody id="listarCursos">
+       
+      </tbody>
+    </table>
+  </div>
+  <div id="modal_container_adicionar"></div>
+</body>
+
+</html>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/crudCursos.js"></script>

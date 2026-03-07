@@ -11,7 +11,7 @@ const arrayCursos = buscarCursos()
     console.error("Erro ao buscar cursos:", erro);
   });
 
-console.log(arrayCursos)
+console.log(arrayCursos)  
 
 function renderizarCursos() {
   const tbody = document.getElementById("listarCursos");
@@ -118,8 +118,8 @@ function adicionarCurso() {
           <div class="row mb-3">
             <div class="col-md-6">
              <label for="input_cep">CEP:</label>
-             <input type="text" class="form-control" id="input_cep" placeholder="Ex: 01001-000" maxlength="9">
-            </div>
+             <input type="text" class="form-control" id="input_cep" oninput="mascaraCep(this)" placeholder="Ex: 01001-000" maxlength="9" onblur="buscarCep()">
+             </div>
             <div class="col-md-6">
               <label for="input_rua">Rua:</label>
               <input type="text" class="form-control" id="input_rua" placeholder="Ex: Av. Paulista">
@@ -164,6 +164,98 @@ function adicionarCurso() {
   `;
 }
 
+function inserirCurso() {
+  const curso = {
+    nome: document.getElementById("input_nome").value,
+    descricao: document.getElementById("input_descricao").value,
+    data_inicio: document.getElementById("input_data_inicio").value,
+    data_encerramento: document.getElementById("input_data_encerramento").value,
+    professor: document.getElementById("input_professor").value,
+    preco: parseFloat(document.getElementById("input_preco").value),
+    vagas: parseInt(document.getElementById("input_vagas").value),
+    area: document.getElementById("input_area").value,
+    iniciado: parseInt(document.getElementById("input_iniciado").value),
+    endereco: {
+      cep: document.getElementById("input_cep").value,
+      rua: document.getElementById("input_rua").value,
+      bairro: document.getElementById("input_bairro").value,
+      numero: document.getElementById("input_numero").value,
+      complemento: document.getElementById("input_complemento").value,
+      cidade: document.getElementById("input_cidade").value,
+      estado: document.getElementById("input_estado").value
+    }
+  };
+
+  fetch("http://localhost:8080/arrayCursos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(curso)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Erro ao cadastrar curso");
+      }
+      return response.json();
+    })
+    .then(() => {
+      alert("Curso cadastrado com sucesso!");
+      fecharModal();
+      renderizarCursos();
+    })
+    .catch(error => {
+      console.error("Erro:", error);
+      alert("Erro ao cadastrar curso");
+    });
+}
+
+function salvarAtualizacao(id) {
+  const cursoAtualizado = {
+    nome: document.getElementById("input_nome").value,
+    descricao: document.getElementById("input_descricao").value,
+    data_inicio: document.getElementById("input_data_inicio").value,
+    data_encerramento: document.getElementById("input_data_encerramento").value,
+    professor: document.getElementById("input_professor").value,
+    preco: parseFloat(document.getElementById("input_preco").value),
+    vagas: parseInt(document.getElementById("input_vagas").value),
+    area: document.getElementById("input_area").value,
+    iniciado: parseInt(document.getElementById("input_iniciado").value),
+    endereco: {
+      cep: document.getElementById("input_cep").value,
+      rua: document.getElementById("input_rua").value,
+      bairro: document.getElementById("input_bairro").value,
+      numero: document.getElementById("input_numero").value,
+      complemento: document.getElementById("input_complemento").value,
+      cidade: document.getElementById("input_cidade").value,
+      estado: document.getElementById("input_estado").value
+    }
+  };
+
+  fetch(`http://localhost:8080/arrayCursos/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(cursoAtualizado)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar curso");
+      }
+      return response.json();
+    })
+    .then(() => {
+      alert("Curso atualizado com sucesso!");
+      fecharModal();
+      renderizarCursos();
+    })
+    .catch(error => {
+      console.error("Erro:", error);
+      alert("Erro ao atualizar curso");
+    });
+}
+
 function deletarCurso(id) {
   console.log("chamou o modal");
 
@@ -190,7 +282,7 @@ function confirmarDelete(id) {
   .then(() => {
     alert("Curso excluído com sucesso!");
     fecharModal();
-    carregarCursos();
+    renderizarCursos();
   })
   .catch(error => {
     console.error("Erro ao deletar:", error);
@@ -280,7 +372,7 @@ function atualizarCurso(id) {
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="input_cep">CEP:</label>
-              <input type="text" class="form-control" id="input_cep" value="${curso.endereco.cep}" maxlength="9">
+              <input type="text" class="form-control" id="input_cep" oninput="mascaraCep(this)" value="${curso.endereco.cep}" maxlength="9" onblur="buscarCep()">
             </div>
             <div class="col-md-6">
               <label for="input_rua">Rua:</label>
@@ -326,6 +418,33 @@ function atualizarCurso(id) {
   `;
     })
 }
+
+function buscarCep() {
+  const cep = document.getElementById("input_cep").value.replace(/\D/g, "");
+
+  if (cep.length !== 8) {
+    return;
+  }
+
+  fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    .then(response => response.json())
+    .then(dados => {
+      if (dados.erro) {
+        alert("CEP não encontrado");
+        return;
+      }
+
+      document.getElementById("input_rua").value = dados.logradouro || "";
+      document.getElementById("input_bairro").value = dados.bairro || "";
+      document.getElementById("input_cidade").value = dados.localidade || "";
+      document.getElementById("input_estado").value = dados.uf || "";
+    })
+    .catch(error => {
+      console.error("Erro ao buscar CEP:", error);
+    });
+}
+
+
 function fecharModal() {
   modal_container_adicionar.innerHTML = ``;
 }

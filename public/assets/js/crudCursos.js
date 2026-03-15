@@ -61,11 +61,11 @@ function adicionarCurso() {
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="input_nome">Nome do Curso:</label>
-              <input type="text" class="form-control" id="input_nome" placeholder="Ex: Harmonização Facial">
+              <input type="text" class="form-control" id="input_nome" value="Ex: Harmonização Facial">
             </div>
             <div class="col-md-6">
               <label for="input_descricao">Descrição:</label>
-              <input type="text" class="form-control" id="input_descricao" placeholder="Breve descrição do curso">
+              <input type="text" class="form-control" id="input_descricao" value="Breve descrição do curso">
             </div>
           </div>
 
@@ -83,22 +83,22 @@ function adicionarCurso() {
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="input_professor">Professor:</label>
-              <input type="text" class="form-control" id="input_professor" placeholder="Ex: João Silva">
+              <input type="text" class="form-control" id="input_professor" value="Ex: João Silva">
             </div>
             <div class="col-md-3">
               <label for="input_preco">Preço (R$):</label>
-              <input type="number" step="0.01" class="form-control" id="input_preco" placeholder="Ex: 8500.00">
+              <input type="number" step="0.01" class="form-control" id="input_preco" value="8500.00">
             </div>
             <div class="col-md-3">
               <label for="input_vagas">Qtd Vagas:</label>
-              <input type="number" class="form-control" id="input_vagas" placeholder="Ex: 20" value="20">
+              <input type="number" class="form-control" id="input_vagas" value="20">
             </div>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="input_area">Área:</label>
-              <input type="text" class="form-control" id="input_area" placeholder="Ex: Estética Avançada">
+              <input type="text" class="form-control" id="input_area" value="Ex: Estética Avançada">
             </div>
             <div class="col-md-6">
               <label for="input_iniciado">Curso Iniciado?</label>
@@ -122,14 +122,14 @@ function adicionarCurso() {
              </div>
             <div class="col-md-6">
               <label for="input_rua">Rua:</label>
-              <input type="text" class="form-control" id="input_rua" placeholder="Ex: Av. Paulista">
+              <input type="text" class="form-control" id="input_rua" placeholder="Ex: Av. Paulista" disabled>
             </div>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-4">
               <label for="input_bairro">Bairro:</label>
-              <input type="text" class="form-control" id="input_bairro" placeholder="Ex: Bela Vista">
+              <input type="text" class="form-control" id="input_bairro" placeholder="Ex: Bela Vista" disabled>
             </div>
             <div class="col-md-4">
               <label for="input_numero">Número:</label>
@@ -144,11 +144,11 @@ function adicionarCurso() {
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="input_cidade">Cidade:</label>
-              <input type="text" class="form-control" id="input_cidade" placeholder="Ex: São Paulo">
+              <input type="text" class="form-control" id="input_cidade" placeholder="Ex: São Paulo" disabled>
             </div>
             <div class="col-md-6">
               <label for="input_estado">Estado:</label>
-              <input type="text" class="form-control" id="input_estado" placeholder="Ex: SP">
+              <input type="text" class="form-control" id="input_estado" placeholder="Ex: SP" disabled>
             </div>
           </div>
 
@@ -163,6 +163,18 @@ function adicionarCurso() {
     </div>
   `;
 }
+
+function mascaraCep(input) {
+    let valor = input.value.replace(/\D/g, ""); // remove tudo que não é número
+
+    if (valor.length > 5) {
+        valor = valor.slice(0,5) + "-" + valor.slice(5,8);
+    }
+    
+    
+    input.value = valor;
+}
+
 
 function inserirCurso() {
   const curso = {
